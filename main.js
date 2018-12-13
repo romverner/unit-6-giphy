@@ -1,8 +1,11 @@
 // Array of video game titles to be queried in GIPHY API
-var topics = ["Castlevania Symphony of the Night", "Skyrim", "Mirrors Edge", "Call of Duty 4"];
+var topics = ["Super Mario Odyssey", "Animal Crossing New Leaf", "Skyrim", "Mirrors Edge", "Call of Duty 4", "Destiny 2"];
+var gifAmount = 10;
 
 // Function that renders buttons onto screen
 function renderButtons() {
+    $("#buttons").empty();
+    
     for (i = 0; i < topics.length; i++) {
 
         var b = $("<button>");
@@ -23,26 +26,66 @@ $(document).ready(function () {
     renderButtons();
 
     $(".gif-button").on("click", function () {
-        // event.preventDefault();
+        event.preventDefault();
 
         var queryURL = "https://api.giphy.com/v1/gifs/search?q=";
-        queryURL += $(this).attr('data').trim();
-        queryURL += "&api_key=IkkWjxhZzjCB0hbJgT2DD9h3atLYPtKP&limit=10";
+        queryURL += $(this).attr('data').trim().replace(/ /g,"_");
+        queryURL += "&api_key=IkkWjxhZzjCB0hbJgT2DD9h3atLYPtKP";
+        queryURL += "&limit=" + gifAmount;
         console.log(queryURL);
 
         $.ajax({
             url: queryURL,
             method: "GET"
             }).then(function(response) {
+                $("#gifs").empty();
                 console.log(response);
 
+                for (i = 0; i < gifAmount; i++) {
+                    var newDiv = $("<div>");
+                    newDiv.addClass("mt-1 mb-1");
 
+                    var newIMG = $("<img>");
+                    newIMG.addClass("status rounded");
+                    newIMG.attr("src", response.data[i].images.fixed_height_still.url);
+                    newIMG.attr("data-still", response.data[i].images.fixed_height_still.url);
+                    newIMG.attr("data-active", response.data[i].images.fixed_height.url)
+                    newIMG.attr("data-search", topics[i]);
+                    newIMG.attr("data-status", "still");
+                    newIMG.attr("value", i);
 
+                    newDiv.append("<h4>Rating: " + response.data[i].rating.toUpperCase() + "</h4>");
+                    newDiv.append(newIMG);
 
-
-
-
-                
+                    $("#gifs").prepend(newDiv);
+                };
             });
+    });
+
+    // Event listener for image clicks, plays or pauses GIF depending on current state
+    $("body").on("click", "img", function() {
+        event.preventDefault();
+
+        var stillImage = $(this).attr('data-still');
+        var activeImage = $(this).attr('data-active');
+
+        var state = $(this).attr('data-status');
+        if (state === 'still') {
+            $(this).attr('src', activeImage);
+            $(this).attr('data-status', 'active');
+        }
+        else if (state === 'active') {
+            $(this).attr('src', stillImage);
+            $(this).attr('data-status', 'still');
+        };
+    });
+
+    // Event listener for user text-field inputs
+    $("#add-button").on("click", function() {
+        event.preventDefault();
+
+        var input = $("#button-input").val().trim();
+        topics.push(input);
+        renderButtons();
     });
 });
