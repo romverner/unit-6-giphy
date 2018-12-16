@@ -1,23 +1,10 @@
+// _________NOTES_________
+// Things to Add:
+// Clear text input field upon entry
+
 // Array of video game titles to be queried in GIPHY API
 var topics = ["Super Mario Odyssey", "Animal Crossing New Leaf", "Skyrim", "Mirrors Edge", "Call of Duty 4", "Destiny 2"];
 var gifAmount = 10;
-
-// Function that renders buttons onto screen
-function renderButtons() {
-    $("#buttons").empty();
-    
-    for (i = 0; i < topics.length; i++) {
-
-        var b = $("<button>");
-        b.text(topics[i]);
-        b.addClass("btn btn-secondary gif-button mt-2 mb-2 mr-1 ml-1");
-        b.attr('data', topics[i]);
-        b.attr('value', i);
-        $("#buttons").append(b);
-
-        console.log("Added buttons!");
-    };
-};
 
 // Waits for HTML to load before running script
 $(document).ready(function () {
@@ -25,7 +12,7 @@ $(document).ready(function () {
     // Initial render of buttons
     renderButtons();
 
-    $(".gif-button").on("click", function () {
+    $(document).on("click", ".gif-button", function () {
         event.preventDefault();
 
         var queryURL = "https://api.giphy.com/v1/gifs/search?q=";
@@ -63,7 +50,7 @@ $(document).ready(function () {
     });
 
     // Event listener for image clicks, plays or pauses GIF depending on current state
-    $("body").on("click", "img", function() {
+    $(document).on("click", "img", function() {
         event.preventDefault();
 
         var stillImage = $(this).attr('data-still');
@@ -81,7 +68,7 @@ $(document).ready(function () {
     });
 
     // Event listener for user text-field inputs
-    $("#add-button").on("click", function() {
+    $(document).on("click", "#add-button", function() {
         event.preventDefault();
 
         var input = $("#button-input").val().trim();
@@ -89,3 +76,20 @@ $(document).ready(function () {
         renderButtons();
     });
 });
+
+// Function that renders buttons onto screen
+function renderButtons() {
+    $(".buttonsHere").empty();
+    
+    for (i = 0; i < topics.length; i++) {
+
+        var b = $("<button>");
+        b.text(topics[i]);
+        b.addClass("btn btn-secondary gif-button mt-2 mb-2 mr-1 ml-1");
+        b.attr('data', topics[i]);
+        b.attr('value', i);
+        $(".buttonsHere").append(b);
+
+        console.log("Added buttons!");
+    };
+};
